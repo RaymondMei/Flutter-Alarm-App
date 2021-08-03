@@ -1,6 +1,8 @@
+import 'package:alarm_app/models/dark_mode.dart';
 import 'package:flutter/material.dart';
 import 'package:alarm_app/screens/home.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:provider/provider.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
@@ -25,12 +27,17 @@ void main() async {
     }
   });
 
-  runApp(MaterialApp(
-    title: "ALARM APP",
-    theme: ThemeData(
-      primarySwatch: Colors.red,
-      // cardColor: Color(0xFF2D2F41),
+  runApp(
+    MaterialApp(
+      title: "ALARM APP",
+      theme: ThemeData(
+        primarySwatch: Colors.red,
+      ),
+      darkTheme: ThemeData(
+        primarySwatch: Colors.red,
+        scaffoldBackgroundColor: Color(0xFF2D2F41),
+      ),
+      home: Home(),
     ),
-    home: Home(),
-  ));
+  );
 }
