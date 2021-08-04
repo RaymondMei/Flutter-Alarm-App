@@ -1,5 +1,5 @@
+import 'dart:math';
 import 'package:alarm_app/models/alarm_info.dart';
-import 'package:alarm_app/models/dark_mode.dart';
 import 'package:alarm_app/services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -19,10 +19,18 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  bool isDarkMode = false;
+  bool isDarkMode = true;
+  int nextGradientColor = (alarms.length == 0 ? 0 : alarms.length - 1) % 5;
+  List<List<Color>> gradientColors = [
+    GradientColors.sky,
+    GradientColors.sunset,
+    GradientColors.sea,
+    GradientColors.mango,
+    GradientColors.fire
+  ];
 
   TimeOfDay _time = TimeOfDay(hour: 7, minute: 15);
-  Future<DateTime> createAlarm() async {
+  Future<DateTime?> setDateTime() async {
     final TimeOfDay? alarmDateTime = await showTimePicker(
       context: context,
       initialTime: _time,
@@ -33,18 +41,17 @@ class _HomeState extends State<Home> {
       return new DateTime(_now.year, _now.month, _now.day, alarmDateTime.hour,
           alarmDateTime.minute);
     } else {
-      return DateTime.now();
+      return null;
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // backgroundColor: Color(0xFF2D2F41),
-      backgroundColor: isDarkMode ? Color(0xFF2D2F41) : Colors.white,
+      backgroundColor: isDarkMode ? backgroundTheme : Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.grey[900],
-        title: Text("Alarm App :)"),
+        backgroundColor: backgroundTheme[900],
+        title: Text("Alarm App"),
         actions: <Widget>[
           TextButton(
               onPressed: () {
@@ -64,7 +71,6 @@ class _HomeState extends State<Home> {
         ],
       ),
       body: Container(
-        padding: EdgeInsets.symmetric(horizontal: 0, vertical: 10),
         child: Column(
           // mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -72,15 +78,24 @@ class _HomeState extends State<Home> {
             Expanded(
               child: ListView(
                 children: alarms.map<Widget>((alarm) {
-                  List<Color> defaultGradientColor = alarm.gradientColor;
                   // SEPARATE ALARMS
                   return Container(
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(colors: alarm.gradientColor),
+                      gradient: LinearGradient(
+                          colors: gradientColors[alarm.gradientColor]),
                       borderRadius: BorderRadius.all(Radius.circular(7)),
+                      // border: Border.all(
+                      //     color: alarm.isActive
+                      //         ? Colors.transparent
+                      //         : Colors.black54,
+                      //     width: 3.0),
                       boxShadow: [
                         BoxShadow(
-                          color: alarm.gradientColor.last.withOpacity(0.4),
+                          color: alarm.isActive
+                              ? gradientColors[alarm.gradientColor]
+                                  .last
+                                  .withOpacity(0.4)
+                              : Colors.transparent,
                           blurRadius: 8,
                           spreadRadius: 4,
                           offset: Offset(4, 4),
@@ -88,157 +103,179 @@ class _HomeState extends State<Home> {
                       ],
                     ),
                     margin: EdgeInsets.fromLTRB(12, 12, 12, 2),
-                    child: ExpansionTile(
-                      tilePadding:
-                          EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                      backgroundColor: Colors.transparent,
-                      collapsedIconColor: Colors.white,
-                      iconColor: Color(0xFF2D2F41),
-                      title: Column(
-                        children: <Widget>[
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              TextButton(
-                                child: Text(
-                                  DateFormat.jm()
-                                      .format(alarm.dateTime.toLocal()),
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 36,
-                                    fontWeight: FontWeight.bold,
-                                    // backgroundColor: Colors.white30,
-                                  ),
-                                ),
-                                onPressed: () async {
-                                  DateTime newDateTime = await createAlarm();
-                                  setState(() {
-                                    alarm.dateTime = newDateTime;
-                                  });
-                                },
-                                style: ButtonStyle(
-                                  splashFactory: InkRipple.splashFactory,
-                                  // enableFeedback: true,
-                                ),
-                              ),
-                              Switch(
-                                value: alarm.isActive,
-                                onChanged: (bool val) {
-                                  setState(() {
-                                    alarm.isActive = !alarm.isActive;
-                                    print(alarm.isActive);
-                                    if (alarm.isActive) {
-                                      alarm.gradientColor = GradientColors.sky;
-                                    } else {
-                                      alarm.gradientColor =
-                                          GradientColors.disabled;
-                                    }
-                                  });
-                                },
-                                activeColor: Colors.white,
-                              ),
-                            ],
-                          ),
-                          Row(
-                            children: <Widget>[
-                              Row(
-                                children: <Widget>[
-                                  Icon(
-                                    Icons.label,
-                                    color: Colors.white,
-                                    size: 24,
-                                  ),
-                                  SizedBox(width: 10),
-                                  Text(
-                                    alarm.title,
+                    // DISABLED COLOR COVER
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: alarm.isActive
+                            ? Colors.transparent
+                            : Colors.black45,
+                        borderRadius: BorderRadius.all(Radius.circular(7)),
+                      ),
+                      child: ExpansionTile(
+                        tilePadding:
+                            EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        backgroundColor: Colors.transparent,
+                        collapsedIconColor: Colors.white,
+                        iconColor: Color(0xFF2D2F41),
+                        title: Column(
+                          children: <Widget>[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                TextButton(
+                                  child: Text(
+                                    DateFormat.jm()
+                                        .format(alarm.dateTime.toLocal()),
                                     style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 20,
+                                      color: alarm.isActive
+                                          ? Colors.white
+                                          : Colors.black54,
+                                      fontSize: 36,
+                                      fontWeight: FontWeight.bold,
+                                      // backgroundColor: Colors.white30,
                                     ),
                                   ),
-                                  SizedBox(width: 10),
-                                  // Text(
-                                  //   alarm.description,
-                                  //   style: TextStyle(
-                                  //     color: Colors.white,
-                                  //     fontSize: 12,
-                                  //   ),
-                                  // ),
-                                ],
-                              ),
-                            ],
-                          ),
+                                  onPressed: () async {
+                                    DateTime? newDateTime = await setDateTime();
+                                    if (newDateTime != null) {
+                                      setState(() {
+                                        alarm.dateTime = newDateTime;
+                                      });
+                                    }
+                                  },
+                                  style: ButtonStyle(
+                                    splashFactory: InkRipple.splashFactory,
+                                    // enableFeedback: true,
+                                  ),
+                                ),
+                                Switch(
+                                  value: alarm.isActive,
+                                  onChanged: (val) {
+                                    setState(() {
+                                      alarm.isActive = !alarm.isActive;
+                                    });
+                                  },
+                                  activeColor: Colors.white,
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        subtitle: Row(
+                          children: <Widget>[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: <Widget>[
+                                Icon(
+                                  Icons.label,
+                                  color: alarm.isActive
+                                      ? Colors.white
+                                      : Colors.black54,
+                                  size: 24,
+                                ),
+                                SizedBox(width: 10),
+                                Text(
+                                  alarm.title,
+                                  style: TextStyle(
+                                    color: alarm.isActive
+                                        ? Colors.white
+                                        : Colors.black54,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                SizedBox(width: 5),
+                                Icon(
+                                  Icons.circle,
+                                  size: 5,
+                                  color: alarm.isActive
+                                      ? Colors.white
+                                      : Colors.black54,
+                                ),
+                                SizedBox(width: 5),
+                                Text(
+                                  alarm.description,
+                                  style: TextStyle(
+                                    color: alarm.isActive
+                                        ? Colors.white
+                                        : Colors.black54,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 25, vertical: 10),
+                            child: Column(
+                              children: <Widget>[
+                                Row(
+                                  children: [
+                                    TextButton.icon(
+                                      icon: Icon(Icons.check_box_outline_blank),
+                                      label: Text("Repeat"),
+                                      onPressed: () {},
+                                      style: TextButton.styleFrom(
+                                        primary: Colors.white,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    TextButton.icon(
+                                      icon:
+                                          Icon(Icons.notifications_on_outlined),
+                                      label: Text("Alarm Sound"),
+                                      onPressed: () {},
+                                      style: TextButton.styleFrom(
+                                        primary: Colors.white,
+                                      ),
+                                    ),
+                                    TextButton.icon(
+                                      icon: Icon(Icons.check_box_outline_blank),
+                                      label: Text("Vibrate"),
+                                      onPressed: () {},
+                                      style: TextButton.styleFrom(
+                                        primary: Colors.white,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  children: <Widget>[
+                                    TextButton.icon(
+                                      icon: Icon(Icons.label_outline),
+                                      label: Text("Label"),
+                                      onPressed: () {},
+                                      style: TextButton.styleFrom(
+                                        primary: Colors.white,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Divider(thickness: 0.5, color: Colors.white),
+                                Row(
+                                  children: <Widget>[
+                                    TextButton.icon(
+                                      icon: Icon(Icons.delete_outline),
+                                      label: Text("Delete"),
+                                      onPressed: () {},
+                                      style: TextButton.styleFrom(
+                                        primary: Colors.white,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          )
                         ],
                       ),
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 25, vertical: 10),
-                          child: Column(
-                            children: <Widget>[
-                              Row(
-                                children: [
-                                  TextButton.icon(
-                                    icon: Icon(Icons.check_box_outline_blank),
-                                    label: Text("Repeat"),
-                                    onPressed: () {},
-                                    style: TextButton.styleFrom(
-                                      primary: Colors.white,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  TextButton.icon(
-                                    icon: Icon(Icons.notifications_on_outlined),
-                                    label: Text("Alarm Sound"),
-                                    onPressed: () {},
-                                    style: TextButton.styleFrom(
-                                      primary: Colors.white,
-                                    ),
-                                  ),
-                                  TextButton.icon(
-                                    icon: Icon(Icons.check_box_outline_blank),
-                                    label: Text("Vibrate"),
-                                    onPressed: () {},
-                                    style: TextButton.styleFrom(
-                                      primary: Colors.white,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                children: <Widget>[
-                                  TextButton.icon(
-                                    icon: Icon(Icons.label_outline),
-                                    label: Text("Label"),
-                                    onPressed: () {},
-                                    style: TextButton.styleFrom(
-                                      primary: Colors.white,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Divider(thickness: 0.5, color: Colors.white),
-                              Row(
-                                children: <Widget>[
-                                  TextButton.icon(
-                                    icon: Icon(Icons.delete_outline),
-                                    label: Text("Delete"),
-                                    onPressed: () {},
-                                    style: TextButton.styleFrom(
-                                      primary: Colors.white,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        )
-                      ],
                     ),
                   );
                 }).toList(),
@@ -249,12 +286,29 @@ class _HomeState extends State<Home> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          await createAlarm();
-          print("TIME is : " + _time.toString());
-          // scheduleAlarm();
+          DateTime? newAlarmDateTime = await setDateTime();
+          if (newAlarmDateTime != null) {
+            AlarmInfo newAlarm = new AlarmInfo(
+              newAlarmDateTime,
+              "Title",
+              "Description",
+              nextGradientColor,
+              true,
+            );
+            await DatabaseService()
+                .createAlarm(newAlarm)
+                .then((alarmId) => newAlarm.alarmId = alarmId);
+            print(newAlarm.alarmId);
+            nextGradientColor++;
+            nextGradientColor %= 5;
+            // nextGradientColor = new Random().nextInt(5);
+            setState(() {
+              alarms.add(newAlarm);
+            });
+          }
         },
         child: Icon(Icons.add),
-        backgroundColor: Colors.grey[900],
+        backgroundColor: backgroundTheme[900],
       ),
     );
   }

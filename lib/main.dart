@@ -1,4 +1,5 @@
-import 'package:alarm_app/models/dark_mode.dart';
+import 'package:alarm_app/constants/theme.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:alarm_app/screens/home.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -9,6 +10,7 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
 
   var initializationSettingsAndroid =
       new AndroidInitializationSettings('codex_logo');
@@ -29,9 +31,10 @@ void main() async {
 
   runApp(
     MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: "ALARM APP",
       theme: ThemeData(
-        primarySwatch: Colors.red,
+        primarySwatch: backgroundTheme,
       ),
       darkTheme: ThemeData(
         primarySwatch: Colors.red,

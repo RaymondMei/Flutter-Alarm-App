@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "698299847131",
+    "project_id": "flutter-alarm-app",
+    "storage_bucket": "flutter-alarm-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:698299847131:android:63c358f203b1aecb2d17fe",
+        "android_client_info": {
+          "package_name": "com.example.alarm_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "698299847131-8isomndr6midoie6a65dmhfbk20tc2gk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDChZuDWT3XQVGQbWRathM8JKHrAHZMfR0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "698299847131-8isomndr6midoie6a65dmhfbk20tc2gk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

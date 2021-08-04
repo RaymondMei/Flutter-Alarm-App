@@ -1,7 +1,7 @@
 # Alarm App
 
-### Raymond Mei
+### Raymond Mei - August 2021
 
 ---
 
-#### Alarm application created using Flutter
+#### Alarm application created using Flutter and Firebase
