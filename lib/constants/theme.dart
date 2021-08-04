@@ -8,6 +8,14 @@ class GradientColors {
   static List<Color> fire = [Color(0xFFFF5DCD), Color(0xFFFF8484)];
 }
 
+List<List<Color>> gradientTemplate = [
+  GradientColors.sky,
+  GradientColors.sunset,
+  GradientColors.sea,
+  GradientColors.mango,
+  GradientColors.fire
+];
+
 MaterialColor backgroundTheme = MaterialColor(
   0xFF2D2F41,
   <int, Color>{

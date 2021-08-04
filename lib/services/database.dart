@@ -27,17 +27,33 @@ class DatabaseService {
       "gradientColor": newAlarmInfo.gradientColor,
       "isActive": newAlarmInfo.isActive,
     }).then((docRef) => alarmId = docRef.id);
-    // print("DOCSID: $alarmId");
     return alarmId;
   }
 
-  Future updateAlarm(AlarmInfo newAlarmInfo) async {
-    return await alarmCollection.doc().update({
+  Future updateAlarm(String alarmId, AlarmInfo newAlarmInfo) async {
+    return await alarmCollection.doc(alarmId).update({
       "dateTime": newAlarmInfo.dateTime,
       "title": newAlarmInfo.title,
       "description": newAlarmInfo.description,
       "gradientColor": newAlarmInfo.gradientColor,
       "isActive": newAlarmInfo.isActive,
     });
+  }
+
+  List<AlarmInfo> _alarmListFromSnapshot(QuerySnapshot snapshot) {
+    return snapshot.docs.map((doc) {
+      return AlarmInfo(
+        doc.get("dateTime").toDate() ?? DateTime.now(),
+        doc.get("title") ?? "Title",
+        doc.get("description") ?? "Description",
+        doc.get("gradientColor") ?? 0,
+        doc.get("isActive") ?? false,
+        alarmId: doc.id,
+      );
+    }).toList();
+  }
+
+  Stream<List<AlarmInfo>> get retrieveAlarms {
+    return alarmCollection.snapshots().map(_alarmListFromSnapshot);
   }
 }
