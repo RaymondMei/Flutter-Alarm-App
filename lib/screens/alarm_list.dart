@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:alarm_app/constants/theme.dart';
 import 'package:alarm_app/models/alarm_info.dart';
 import 'package:alarm_app/services/database.dart';
@@ -20,6 +22,15 @@ class AlarmList extends StatefulWidget {
 class _AlarmListState extends State<AlarmList> {
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenHeight = MediaQuery.of(context).size.height;
+    final double alarmDateTimeFontSize = screenWidth * 0.1;
+    final double alarmOptionsFontSize = screenWidth * 0.05;
+    final double alarmOptionsIconSize = screenWidth * 0.07;
+    final double tileMargins = screenWidth * 0.03;
+    final double paddingH = screenWidth * 0.025;
+    final double paddingV = screenHeight * 0.008;
+
     final alarms = Provider.of<List<AlarmInfo>>(context);
 
     return Container(
@@ -49,15 +60,16 @@ class _AlarmListState extends State<AlarmList> {
                       ),
                     ],
                   ),
-                  margin: EdgeInsets.fromLTRB(12, 12, 12, 2),
+                  margin: EdgeInsets.fromLTRB(
+                      tileMargins, tileMargins, tileMargins, tileMargins / 6),
                   child: Container(
                     decoration: BoxDecoration(
                       color: alarm.active ? Colors.transparent : Colors.black45,
                       borderRadius: BorderRadius.all(Radius.circular(7)),
                     ),
                     child: ExpansionTile(
-                      tilePadding:
-                          EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      tilePadding: EdgeInsets.symmetric(
+                          horizontal: paddingH, vertical: paddingV),
                       backgroundColor: Colors.transparent,
                       collapsedIconColor: Colors.white,
                       iconColor: Color(0xFF2D2F41),
@@ -74,7 +86,7 @@ class _AlarmListState extends State<AlarmList> {
                                     color: alarm.active
                                         ? Colors.white
                                         : Colors.black54,
-                                    fontSize: 36,
+                                    fontSize: alarmDateTimeFontSize,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -88,16 +100,18 @@ class _AlarmListState extends State<AlarmList> {
                                 },
                                 style: ButtonStyle(
                                   splashFactory: InkRipple.splashFactory,
-                                  // enableFeedback: true,
                                 ),
                               ),
-                              Switch(
-                                value: alarm.active,
-                                onChanged: (val) {
-                                  DatabaseService().updateAlarmActive(
-                                      alarm.alarmId, !alarm.active);
-                                },
-                                activeColor: Colors.white,
+                              Transform.scale(
+                                scale: max(1, screenWidth / 600),
+                                child: Switch(
+                                  value: alarm.active,
+                                  onChanged: (val) {
+                                    DatabaseService().updateAlarmActive(
+                                        alarm.alarmId, !alarm.active);
+                                  },
+                                  activeColor: Colors.white,
+                                ),
                               ),
                             ],
                           ),
@@ -138,8 +152,9 @@ class _AlarmListState extends State<AlarmList> {
                       ),
                       children: <Widget>[
                         Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 25, vertical: 10),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: paddingH * 2.5,
+                              vertical: paddingV * 1.5),
                           child: Column(
                             children: <Widget>[
                               Row(
@@ -150,16 +165,16 @@ class _AlarmListState extends State<AlarmList> {
                                     icon: alarm.repeat
                                         ? Icon(
                                             Icons.check_box_outlined,
-                                            size: 26,
+                                            size: alarmOptionsIconSize,
                                           )
                                         : Icon(
                                             Icons.check_box_outline_blank,
-                                            size: 26,
+                                            size: alarmOptionsIconSize,
                                           ),
                                     label: Text(
                                       "Repeat",
                                       style: TextStyle(
-                                        fontSize: 20,
+                                        fontSize: alarmOptionsFontSize,
                                       ),
                                     ),
                                     onPressed: () {
@@ -172,7 +187,7 @@ class _AlarmListState extends State<AlarmList> {
                                     ),
                                   ),
                                   SizedBox(
-                                    width: 200,
+                                    width: screenWidth * 0.45,
                                     child: WeekdaySelector(
                                       onChanged: (int day) {
                                         alarm.days[day % 7] =
@@ -180,7 +195,9 @@ class _AlarmListState extends State<AlarmList> {
                                         DatabaseService().updateAlarmDays(
                                             alarm.alarmId, alarm.days);
                                       },
-                                      values: alarm.days,
+                                      values: alarm.repeat
+                                          ? alarm.days
+                                          : List.filled(7, null),
                                       color:
                                           gradientTemplate[alarm.gradientColor]
                                               .first,
@@ -195,12 +212,12 @@ class _AlarmListState extends State<AlarmList> {
                                   TextButton.icon(
                                     icon: Icon(
                                       Icons.notifications_on_outlined,
-                                      size: 26,
+                                      size: alarmOptionsIconSize,
                                     ),
                                     label: Text(
                                       "Alarm Sound",
                                       style: TextStyle(
-                                        fontSize: 20,
+                                        fontSize: alarmOptionsFontSize,
                                       ),
                                     ),
                                     onPressed: () {},
@@ -212,16 +229,16 @@ class _AlarmListState extends State<AlarmList> {
                                     icon: alarm.vibrate
                                         ? Icon(
                                             Icons.check_box_outlined,
-                                            size: 26,
+                                            size: alarmOptionsIconSize,
                                           )
                                         : Icon(
                                             Icons.check_box_outline_blank,
-                                            size: 26,
+                                            size: alarmOptionsIconSize,
                                           ),
                                     label: Text(
                                       "Vibrate",
                                       style: TextStyle(
-                                        fontSize: 20,
+                                        fontSize: alarmOptionsFontSize,
                                       ),
                                     ),
                                     onPressed: () {
@@ -240,12 +257,12 @@ class _AlarmListState extends State<AlarmList> {
                                 child: TextButton.icon(
                                   icon: Icon(
                                     Icons.label_outline,
-                                    size: 26,
+                                    size: alarmOptionsIconSize * 1.05,
                                   ),
                                   label: Text(
                                     "Label",
                                     style: TextStyle(
-                                      fontSize: 20,
+                                      fontSize: alarmOptionsFontSize,
                                     ),
                                   ),
                                   style: TextButton.styleFrom(
@@ -269,12 +286,12 @@ class _AlarmListState extends State<AlarmList> {
                                 child: TextButton.icon(
                                   icon: Icon(
                                     Icons.delete_outlined,
-                                    size: 28,
+                                    size: alarmOptionsIconSize * 1.1,
                                   ),
                                   label: Text(
                                     "Delete",
                                     style: TextStyle(
-                                      fontSize: 24,
+                                      fontSize: alarmOptionsFontSize * 1.3,
                                     ),
                                   ),
                                   onPressed: () {

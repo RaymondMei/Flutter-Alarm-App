@@ -8,8 +8,8 @@ class DatabaseService {
       FirebaseFirestore.instance.collection("alarms");
 
   Future<String> createAlarm(AlarmInfo newAlarmInfo) async {
-    String alarmId = "";
-    await alarmCollection.add({
+    String alarmId = Timestamp.now().toString();
+    await alarmCollection.doc(alarmId).set({
       "dateTime": newAlarmInfo.dateTime,
       "title": newAlarmInfo.title,
       "description": newAlarmInfo.description,
@@ -18,7 +18,8 @@ class DatabaseService {
       "repeat": newAlarmInfo.repeat,
       "days": newAlarmInfo.days,
       "vibrate": newAlarmInfo.vibrate,
-    }).then((docRef) => alarmId = docRef.id);
+      // }).then((docRef) => alarmId = docRef.id);
+    });
     return alarmId;
   }
 
@@ -35,7 +36,7 @@ class DatabaseService {
         doc.get("gradientColor") ?? 0,
         doc.get("active") ?? true,
         doc.get("repeat") ?? false,
-        doc.get("days") ?? List.filled(7, false, growable: false),
+        doc.get("days") ?? List.filled(7, false),
         doc.get("vibrate") ?? false,
         alarmId: doc.id,
       );

@@ -61,7 +61,7 @@ class _HomeState extends State<Home> {
                 nextGradientColor,
                 true,
                 false,
-                List.filled(7, false, growable: false),
+                List.filled(7, false),
                 false,
               );
               await DatabaseService()
