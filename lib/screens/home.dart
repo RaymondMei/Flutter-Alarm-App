@@ -18,7 +18,8 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   bool isDarkMode = true;
-  int nextGradientColor = (alarms.length == 0 ? 0 : alarms.length - 1) % 5;
+  // int nextGradientColor = (alarms.length == 0 ? 0 : alarms.length - 1) % 5;
+  int nextGradientColor = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -59,17 +60,18 @@ class _HomeState extends State<Home> {
                 "Description",
                 nextGradientColor,
                 true,
+                false,
+                List.filled(7, false, growable: false),
+                false,
               );
               await DatabaseService()
                   .createAlarm(newAlarm)
                   .then((alarmId) => newAlarm.alarmId = alarmId);
-              print(newAlarm.alarmId);
-              nextGradientColor++;
-              nextGradientColor %= 5;
+              nextGradientColor = (nextGradientColor + 1) % 5;
               // nextGradientColor = new Random().nextInt(5);
-              setState(() {
-                alarms.add(newAlarm);
-              });
+              // setState(() {
+              //   alarms.add(newAlarm);
+              // });
             }
           },
           child: Icon(Icons.add),

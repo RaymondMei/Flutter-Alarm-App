@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 
 class AlarmInfo {
@@ -5,16 +7,22 @@ class AlarmInfo {
   late String title;
   late String description;
   late int gradientColor;
-  late bool isActive;
+  late bool active;
+  late bool repeat;
+  late List<bool> days;
+  late bool vibrate;
   late String alarmId;
 
   AlarmInfo(DateTime dateTime, String title, String description,
-      int gradientColor, bool isActive,
+      int gradientColor, bool active, bool repeat, List days, bool vibrate,
       {this.alarmId = ""}) {
     this.dateTime = dateTime;
     this.title = title;
     this.description = description;
     this.gradientColor = gradientColor;
-    this.isActive = isActive;
+    this.active = active;
+    this.repeat = repeat;
+    this.days = days.cast<bool>();
+    this.vibrate = vibrate;
   }
 }

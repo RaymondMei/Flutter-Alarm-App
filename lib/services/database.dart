@@ -3,18 +3,7 @@ import 'package:alarm_app/models/alarm_info.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-List<AlarmInfo> alarms = [
-  // AlarmInfo(DateTime.now(), "Office", "Going :)", GradientColors.sky, true),
-  // AlarmInfo(DateTime.now(), "Sport", "Going :)", GradientColors.sunset, true),
-  // AlarmInfo("Game", "Going :)", DateTime.now(), GradientColors.sea, true),
-  // AlarmInfo("School", "Going :)", DateTime.now(), GradientColors.mango, true),
-  // AlarmInfo("Wakeup", "Going :)", DateTime.now(), GradientColors.fire, true),
-];
-
 class DatabaseService {
-  // final String alarmId;
-  // DatabaseService({required this.alarmId});
-
   final CollectionReference alarmCollection =
       FirebaseFirestore.instance.collection("alarms");
 
@@ -25,19 +14,16 @@ class DatabaseService {
       "title": newAlarmInfo.title,
       "description": newAlarmInfo.description,
       "gradientColor": newAlarmInfo.gradientColor,
-      "isActive": newAlarmInfo.isActive,
+      "active": newAlarmInfo.active,
+      "repeat": newAlarmInfo.repeat,
+      "days": newAlarmInfo.days,
+      "vibrate": newAlarmInfo.vibrate,
     }).then((docRef) => alarmId = docRef.id);
     return alarmId;
   }
 
-  Future updateAlarm(String alarmId, AlarmInfo newAlarmInfo) async {
-    return await alarmCollection.doc(alarmId).update({
-      "dateTime": newAlarmInfo.dateTime,
-      "title": newAlarmInfo.title,
-      "description": newAlarmInfo.description,
-      "gradientColor": newAlarmInfo.gradientColor,
-      "isActive": newAlarmInfo.isActive,
-    });
+  Future<void> deleteAlarm(String alarmId) async {
+    return await alarmCollection.doc(alarmId).delete();
   }
 
   List<AlarmInfo> _alarmListFromSnapshot(QuerySnapshot snapshot) {
@@ -47,7 +33,10 @@ class DatabaseService {
         doc.get("title") ?? "Title",
         doc.get("description") ?? "Description",
         doc.get("gradientColor") ?? 0,
-        doc.get("isActive") ?? false,
+        doc.get("active") ?? true,
+        doc.get("repeat") ?? false,
+        doc.get("days") ?? List.filled(7, false, growable: false),
+        doc.get("vibrate") ?? false,
         alarmId: doc.id,
       );
     }).toList();
@@ -55,5 +44,47 @@ class DatabaseService {
 
   Stream<List<AlarmInfo>> get retrieveAlarms {
     return alarmCollection.snapshots().map(_alarmListFromSnapshot);
+  }
+
+  Future updateAlarmDateTime(String alarmId, DateTime newDateTime) async {
+    return await alarmCollection.doc(alarmId).update({
+      "dateTime": newDateTime,
+    });
+  }
+
+  Future updateAlarmTitle(String alarmId, DateTime newTitle) async {
+    return await alarmCollection.doc(alarmId).update({
+      "title": newTitle,
+    });
+  }
+
+  Future updateAlarmDescription(String alarmId, String newDescription) async {
+    return await alarmCollection.doc(alarmId).update({
+      "description": newDescription,
+    });
+  }
+
+  Future updateAlarmActive(String alarmId, bool newActive) async {
+    return await alarmCollection.doc(alarmId).update({
+      "active": newActive,
+    });
+  }
+
+  Future updateAlarmRepeat(String alarmId, bool newRepeat) async {
+    return await alarmCollection.doc(alarmId).update({
+      "repeat": newRepeat,
+    });
+  }
+
+  Future updateAlarmDays(String alarmId, List<bool> newDays) async {
+    return await alarmCollection.doc(alarmId).update({
+      "days": newDays,
+    });
+  }
+
+  Future updateAlarmVibrate(String alarmId, bool newVibrate) async {
+    return await alarmCollection.doc(alarmId).update({
+      "vibrate": newVibrate,
+    });
   }
 }

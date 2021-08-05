@@ -36,10 +36,6 @@ void main() async {
       theme: ThemeData(
         primarySwatch: backgroundTheme,
       ),
-      darkTheme: ThemeData(
-        primarySwatch: Colors.red,
-        scaffoldBackgroundColor: Color(0xFF2D2F41),
-      ),
       home: Home(),
     ),
   );
