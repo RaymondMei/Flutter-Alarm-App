@@ -53,7 +53,7 @@ class DatabaseService {
     });
   }
 
-  Future updateAlarmTitle(String alarmId, DateTime newTitle) async {
+  Future updateAlarmTitle(String alarmId, String newTitle) async {
     return await alarmCollection.doc(alarmId).update({
       "title": newTitle,
     });

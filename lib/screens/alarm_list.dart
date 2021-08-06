@@ -31,6 +31,8 @@ class _AlarmListState extends State<AlarmList> {
     final double paddingH = screenWidth * 0.025;
     final double paddingV = screenHeight * 0.008;
 
+    final _formKey = GlobalKey<FormState>();
+
     final alarms = Provider.of<List<AlarmInfo>>(context);
 
     return Container(
@@ -42,6 +44,7 @@ class _AlarmListState extends State<AlarmList> {
               itemCount: alarms.length,
               itemBuilder: (context, index) {
                 AlarmInfo alarm = alarms[index];
+                String desc = alarm.repeat ? setDesc(alarm.days) : "";
                 return Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
@@ -118,36 +121,43 @@ class _AlarmListState extends State<AlarmList> {
                         ],
                       ),
                       subtitle: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-                          // Icon(
-                          //   Icons.label,
-                          //   color: alarm.active ? Colors.white : Colors.black54,
-                          //   size: 24,
-                          // ),
-                          // SizedBox(width: 10),
-                          // Text(
-                          //   alarm.title,
-                          //   style: TextStyle(
-                          //     color:
-                          //         alarm.active ? Colors.white : Colors.black54,
-                          //     fontSize: 16,
-                          //   ),
-                          // ),
-                          // SizedBox(width: 5),
-                          // Icon(
-                          //   Icons.circle,
-                          //   size: 5,
-                          //   color: alarm.active ? Colors.white : Colors.black54,
-                          // ),
-                          // SizedBox(width: 5),
-                          // Text(
-                          //   alarm.description,
-                          //   style: TextStyle(
-                          //     color:
-                          //         alarm.active ? Colors.white : Colors.black54,
-                          //     fontSize: 16,
-                          //   ),
-                          // ),
+                          if (desc.length != 0 && alarm.repeat == true) ...[
+                            SizedBox(width: paddingH * 0.8),
+                            Container(
+                              child: Text(
+                                desc,
+                                style: TextStyle(
+                                  color: alarm.active
+                                      ? Colors.white
+                                      : Colors.black54,
+                                  fontSize: alarmOptionsFontSize * 0.75,
+                                ),
+                                overflow: TextOverflow.visible,
+                              ),
+                            ),
+                          ],
+                          SizedBox(width: paddingH * 0.8),
+                          Icon(
+                            Icons.label,
+                            color: alarm.active ? Colors.white : Colors.black54,
+                            size: alarmOptionsIconSize * 0.7,
+                          ),
+                          SizedBox(width: paddingH * 0.8),
+                          Expanded(
+                            child: Text(
+                              alarm.title,
+                              style: TextStyle(
+                                color: alarm.active
+                                    ? Colors.white
+                                    : Colors.black54,
+                                fontSize: alarmOptionsFontSize * 0.9,
+                              ),
+                              softWrap: false,
+                              overflow: TextOverflow.fade,
+                            ),
+                          ),
                         ],
                       ),
                       children: <Widget>[
@@ -181,6 +191,11 @@ class _AlarmListState extends State<AlarmList> {
                                       alarm.repeat = !alarm.repeat;
                                       DatabaseService().updateAlarmRepeat(
                                           alarm.alarmId, alarm.repeat);
+                                      if (desc.length == 0) {
+                                        alarm.days[0] = true;
+                                        DatabaseService().updateAlarmDays(
+                                            alarm.alarmId, alarm.days);
+                                      }
                                     },
                                     style: TextButton.styleFrom(
                                       primary: Colors.white,
@@ -189,11 +204,18 @@ class _AlarmListState extends State<AlarmList> {
                                   SizedBox(
                                     width: screenWidth * 0.45,
                                     child: WeekdaySelector(
+                                      firstDayOfWeek: 0,
                                       onChanged: (int day) {
                                         alarm.days[day % 7] =
                                             !alarm.days[day % 7];
                                         DatabaseService().updateAlarmDays(
                                             alarm.alarmId, alarm.days);
+                                        if (alarm.days
+                                            .every((_day) => _day == false)) {
+                                          alarm.repeat = false;
+                                          DatabaseService().updateAlarmRepeat(
+                                              alarm.alarmId, alarm.repeat);
+                                        }
                                       },
                                       values: alarm.repeat
                                           ? alarm.days
@@ -270,13 +292,12 @@ class _AlarmListState extends State<AlarmList> {
                                     alignment: Alignment.centerLeft,
                                   ),
                                   onPressed: () async {
-                                    // return showDialog(
-                                    //   context: context,
-                                    //   builder: (_) => AlertDialog(
-                                    //     title: Text("Label"),
-                                    //     content: TextField(),
-                                    //   ),
-                                    // );
+                                    String newAlarmTitle =
+                                        await setTitle(context);
+                                    if (newAlarmTitle != "") {
+                                      DatabaseService().updateAlarmTitle(
+                                          alarm.alarmId, newAlarmTitle);
+                                    }
                                   },
                                 ),
                               ),

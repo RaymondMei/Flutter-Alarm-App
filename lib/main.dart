@@ -38,6 +38,9 @@ void main() async {
       title: "ALARM APP",
       theme: ThemeData(
         primarySwatch: backgroundTheme,
+        dialogTheme: DialogTheme(
+          backgroundColor: backgroundTheme,
+        ),
       ),
       home: Home(),
     ),
