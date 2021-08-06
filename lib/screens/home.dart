@@ -5,9 +5,10 @@ import 'package:alarm_app/services/database.dart';
 import 'package:alarm_app/services/schedule_alarm.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:alarm_app/constants/theme.dart';
+import 'package:animations/animations.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -68,10 +69,6 @@ class _HomeState extends State<Home> {
                   .createAlarm(newAlarm)
                   .then((alarmId) => newAlarm.alarmId = alarmId);
               nextGradientColor = (nextGradientColor + 1) % 5;
-              // nextGradientColor = new Random().nextInt(5);
-              // setState(() {
-              //   alarms.add(newAlarm);
-              // });
             }
           },
           child: Icon(Icons.add),

@@ -1,9 +1,44 @@
 import 'package:alarm_app/constants/theme.dart';
 import 'package:alarm_app/models/alarm_info.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class DatabaseService {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  Stream<User?> get user {
+    return _auth.authStateChanges();
+  }
+
+  Future userId() async {
+    try {
+      UserCredential result = await _auth.signInAnonymously();
+      User? user = result.user;
+      if (user != null) {
+        return user.uid;
+      } else {
+        return user;
+      }
+    } catch (e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
+  // DONT USE THIS
+  Future signOut() async {
+    try {
+      return await _auth.signOut();
+    } catch (e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
+  final CollectionReference userCollection =
+      FirebaseFirestore.instance.collection("users");
+
   final CollectionReference alarmCollection =
       FirebaseFirestore.instance.collection("alarms");
 

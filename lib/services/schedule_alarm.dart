@@ -2,6 +2,7 @@ import 'package:alarm_app/constants/theme.dart';
 import 'package:alarm_app/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:animations/animations.dart';
 
 TimeOfDay _time = TimeOfDay(hour: 7, minute: 15);
 Future<DateTime?> setDateTime(context) async {
@@ -19,7 +20,7 @@ Future<DateTime?> setDateTime(context) async {
   }
 }
 
-Future<String> setTitle(context) async {
+Future<String> setTitle(context, String oldTitle) async {
   final screenWidth = MediaQuery.of(context).size.width;
   final screenHeight = MediaQuery.of(context).size.height;
 
@@ -35,7 +36,8 @@ Future<String> setTitle(context) async {
         ),
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(7))),
-        content: TextField(
+        content: TextFormField(
+          initialValue: oldTitle,
           onChanged: (val) {
             label = val;
           },

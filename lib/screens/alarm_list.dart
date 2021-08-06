@@ -11,6 +11,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:weekday_selector/weekday_selector.dart';
+import 'package:animations/animations.dart';
 
 class AlarmList extends StatefulWidget {
   const AlarmList({Key? key}) : super(key: key);
@@ -30,8 +31,6 @@ class _AlarmListState extends State<AlarmList> {
     final double tileMargins = screenWidth * 0.03;
     final double paddingH = screenWidth * 0.025;
     final double paddingV = screenHeight * 0.008;
-
-    final _formKey = GlobalKey<FormState>();
 
     final alarms = Provider.of<List<AlarmInfo>>(context);
 
@@ -121,9 +120,9 @@ class _AlarmListState extends State<AlarmList> {
                         ],
                       ),
                       subtitle: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: <Widget>[
-                          if (desc.length != 0 && alarm.repeat == true) ...[
+                          if (alarm.repeat == true && desc.length != 0) ...[
                             SizedBox(width: paddingH * 0.8),
                             Container(
                               child: Text(
@@ -138,26 +137,29 @@ class _AlarmListState extends State<AlarmList> {
                               ),
                             ),
                           ],
-                          SizedBox(width: paddingH * 0.8),
-                          Icon(
-                            Icons.label,
-                            color: alarm.active ? Colors.white : Colors.black54,
-                            size: alarmOptionsIconSize * 0.7,
-                          ),
-                          SizedBox(width: paddingH * 0.8),
-                          Expanded(
-                            child: Text(
-                              alarm.title,
-                              style: TextStyle(
-                                color: alarm.active
-                                    ? Colors.white
-                                    : Colors.black54,
-                                fontSize: alarmOptionsFontSize * 0.9,
-                              ),
-                              softWrap: false,
-                              overflow: TextOverflow.fade,
+                          if (alarm.title.length != 0) ...[
+                            SizedBox(width: paddingH * 0.8),
+                            Icon(
+                              Icons.label,
+                              color:
+                                  alarm.active ? Colors.white : Colors.black54,
+                              size: alarmOptionsIconSize * 0.7,
                             ),
-                          ),
+                            SizedBox(width: paddingH * 0.8),
+                            Expanded(
+                              child: Text(
+                                alarm.title,
+                                style: TextStyle(
+                                  color: alarm.active
+                                      ? Colors.white
+                                      : Colors.black54,
+                                  fontSize: alarmOptionsFontSize * 0.9,
+                                ),
+                                softWrap: false,
+                                overflow: TextOverflow.fade,
+                              ),
+                            ),
+                          ],
                         ],
                       ),
                       children: <Widget>[
@@ -292,16 +294,14 @@ class _AlarmListState extends State<AlarmList> {
                                     alignment: Alignment.centerLeft,
                                   ),
                                   onPressed: () async {
-                                    String newAlarmTitle =
-                                        await setTitle(context);
-                                    if (newAlarmTitle != "") {
-                                      DatabaseService().updateAlarmTitle(
-                                          alarm.alarmId, newAlarmTitle);
-                                    }
+                                    alarm.title =
+                                        await setTitle(context, alarm.title);
+                                    DatabaseService().updateAlarmTitle(
+                                        alarm.alarmId, alarm.title);
                                   },
                                 ),
                               ),
-                              Divider(thickness: 0.5, color: Colors.white),
+                              Divider(thickness: 1, color: Colors.white),
                               SizedBox(
                                 width: double.infinity,
                                 child: TextButton.icon(

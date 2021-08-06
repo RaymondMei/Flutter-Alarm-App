@@ -1,4 +1,7 @@
 import 'package:alarm_app/constants/theme.dart';
+import 'package:alarm_app/screens/wrapper.dart';
+import 'package:alarm_app/services/database.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:alarm_app/screens/home.dart';
@@ -42,7 +45,11 @@ void main() async {
           backgroundColor: backgroundTheme,
         ),
       ),
-      home: Home(),
+      home: StreamProvider<User?>.value(
+        value: DatabaseService().user,
+        initialData: null,
+        child: Wrapper(),
+      ),
     ),
   );
 }

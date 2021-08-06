@@ -5,9 +5,10 @@ class Loading extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: backgroundTheme,
       body: Center(
         child: CircularProgressIndicator(
-          color: backgroundTheme,
+          color: Colors.white,
         ),
       ),
     );
