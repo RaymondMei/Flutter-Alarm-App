@@ -15,40 +15,24 @@ class Wrapper extends StatefulWidget {
 class _WrapperState extends State<Wrapper> {
   final DatabaseService _auth = DatabaseService();
 
-  initUserId() async {
+  Future<dynamic> initUserId() async {
     dynamic result = await _auth.userId();
-    if (result == null) {
-      print("Error signing in");
-    } else {
-      print("Signed in");
-      print(result);
-    }
+    return result;
   }
 
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<User?>(context);
-
-    if (user != null) {
-      return Home();
-    } else {
-      initUserId();
-      print(user);
-      return Loading();
-    }
-    // return Scaffold(
-    //   body: Padding(
-    //     padding: const EdgeInsets.all(50.0),
-    //     child: Container(
-    //       child: ElevatedButton(
-    //         child: Text("Sign Out ANON"),
-    //         onPressed: () {
-    //           DatabaseService().signOut();
-    //           print("Signed out");
-    //         },
-    //       ),
-    //     ),
-    //   ),
-    // );
+    return FutureBuilder(
+      future: initUserId(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done &&
+            snapshot.data != null) {
+          return Home();
+        } else {
+          print("Loading... ${snapshot.data}");
+          return Loading();
+        }
+      },
+    );
   }
 }
