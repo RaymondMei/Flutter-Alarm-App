@@ -1,8 +1,11 @@
 import 'package:alarm_app/constants/theme.dart';
+import 'package:alarm_app/main.dart';
 import 'package:alarm_app/models/alarm_info.dart';
+import 'package:alarm_app/services/schedule_alarm.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 var alarmCollection = <String, CollectionReference<Map<String, dynamic>>>{};
 var uid = "";
@@ -50,6 +53,7 @@ class DatabaseService {
   }
 
   Future<String> createAlarm(AlarmInfo newAlarmInfo) async {
+    updateNoti(newAlarmInfo);
     String alarmId = Timestamp.now().toString();
     await alarmCollection[uid]!.doc(alarmId).set({
       "dateTime": newAlarmInfo.dateTime,
@@ -65,6 +69,7 @@ class DatabaseService {
   }
 
   Future<void> deleteAlarm(String alarmId) async {
+    flutterLocalNotificationsPlugin.cancel(alarmId.hashCode, tag: alarmId);
     return await alarmCollection[uid]!.doc(alarmId).delete();
   }
 
@@ -72,8 +77,9 @@ class DatabaseService {
     return snapshot.docs.map((doc) {
       return AlarmInfo(
         doc.get("dateTime").toDate() ?? DateTime.now(),
-        doc.get("title") ?? "Title",
-        doc.get("description") ?? "Description",
+        doc.get("title") ?? "Alarm",
+        doc.get("description") ??
+            DateFormat.jm().format(DateTime.now().toLocal()),
         doc.get("gradientColor") ?? 0,
         doc.get("active") ?? true,
         doc.get("repeat") ?? false,
@@ -88,45 +94,57 @@ class DatabaseService {
     return alarmCollection[uid]!.snapshots().map(_alarmListFromSnapshot);
   }
 
-  Future updateAlarmDateTime(String alarmId, DateTime newDateTime) async {
-    return await alarmCollection[uid]!.doc(alarmId).update({
-      "dateTime": newDateTime,
+  Future updateAlarmDateTime(AlarmInfo newAlarmInfo) async {
+    updateNoti(newAlarmInfo);
+    return await alarmCollection[uid]!.doc(newAlarmInfo.alarmId).update({
+      "dateTime": newAlarmInfo.dateTime,
     });
   }
 
-  Future updateAlarmTitle(String alarmId, String newTitle) async {
-    return await alarmCollection[uid]!.doc(alarmId).update({
-      "title": newTitle,
+  Future updateAlarmTitle(AlarmInfo newAlarmInfo) async {
+    updateNoti(newAlarmInfo);
+    return await alarmCollection[uid]!.doc(newAlarmInfo.alarmId).update({
+      "title": newAlarmInfo.title,
     });
   }
 
-  Future updateAlarmDescription(String alarmId, String newDescription) async {
-    return await alarmCollection[uid]!.doc(alarmId).update({
-      "description": newDescription,
+  Future updateAlarmDescription(AlarmInfo newAlarmInfo) async {
+    updateNoti(newAlarmInfo);
+    return await alarmCollection[uid]!.doc(newAlarmInfo.alarmId).update({
+      "description": newAlarmInfo.description,
     });
   }
 
-  Future updateAlarmActive(String alarmId, bool newActive) async {
-    return await alarmCollection[uid]!.doc(alarmId).update({
-      "active": newActive,
+  Future updateAlarmActive(AlarmInfo newAlarmInfo) async {
+    if (newAlarmInfo.active) {
+      updateNoti(newAlarmInfo);
+    } else {
+      flutterLocalNotificationsPlugin.cancel(newAlarmInfo.alarmId.hashCode,
+          tag: newAlarmInfo.alarmId);
+    }
+    return await alarmCollection[uid]!.doc(newAlarmInfo.alarmId).update({
+      "active": newAlarmInfo.active,
     });
   }
 
-  Future updateAlarmRepeat(String alarmId, bool newRepeat) async {
-    return await alarmCollection[uid]!.doc(alarmId).update({
-      "repeat": newRepeat,
+  Future updateAlarmRepeat(AlarmInfo newAlarmInfo) async {
+    updateNoti(newAlarmInfo);
+    return await alarmCollection[uid]!.doc(newAlarmInfo.alarmId).update({
+      "repeat": newAlarmInfo.repeat,
     });
   }
 
-  Future updateAlarmDays(String alarmId, List<bool> newDays) async {
-    return await alarmCollection[uid]!.doc(alarmId).update({
-      "days": newDays,
+  Future updateAlarmDays(AlarmInfo newAlarmInfo) async {
+    updateNoti(newAlarmInfo);
+    return await alarmCollection[uid]!.doc(newAlarmInfo.alarmId).update({
+      "days": newAlarmInfo.days,
     });
   }
 
-  Future updateAlarmVibrate(String alarmId, bool newVibrate) async {
-    return await alarmCollection[uid]!.doc(alarmId).update({
-      "vibrate": newVibrate,
+  Future updateAlarmVibrate(AlarmInfo newAlarmInfo) async {
+    updateNoti(newAlarmInfo);
+    return await alarmCollection[uid]!.doc(newAlarmInfo.alarmId).update({
+      "vibrate": newAlarmInfo.vibrate,
     });
   }
 }

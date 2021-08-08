@@ -2,7 +2,7 @@
     package="com.example.alarm_app">
    <application
         android:label="alarm_app"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@drawable/codex_logo">
         <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait"

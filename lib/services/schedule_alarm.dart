@@ -1,11 +1,84 @@
 import 'package:alarm_app/constants/theme.dart';
 import 'package:alarm_app/main.dart';
+import 'package:alarm_app/models/alarm_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:animations/animations.dart';
+import 'package:intl/intl.dart';
+import 'package:timezone/timezone.dart' as tz;
 
-TimeOfDay _time = TimeOfDay(hour: 7, minute: 15);
-Future<DateTime?> setDateTime(context) async {
+Future<void> updateNoti(AlarmInfo alarm) async {
+  if (!alarm.active) return;
+  if (!alarm.repeat) {
+    await flutterLocalNotificationsPlugin.cancel(alarm.alarmId.hashCode,
+        tag: alarm.alarmId);
+    if (DateTime.now().isAfter(alarm.dateTime)) {
+      alarm.dateTime = alarm.dateTime.add(Duration(days: 1));
+    }
+    scheduleAlarm(alarm);
+  } else {
+    for (var i = 0; i < 7; i++) {
+      await flutterLocalNotificationsPlugin.cancel(alarm.alarmId.hashCode + i,
+          tag: alarm.alarmId);
+    }
+    scheduleAlarm(alarm);
+  }
+}
+
+Future scheduleAlarm(AlarmInfo alarm) async {
+  var androidDetails = new AndroidNotificationDetails(
+      "channelID", "Local Notification", "Description",
+      importance: Importance.max, priority: Priority.max);
+  var iosDetails = new IOSNotificationDetails();
+  var generalNotificationDetails =
+      new NotificationDetails(android: androidDetails, iOS: iosDetails);
+
+  if (!alarm.repeat) {
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+        alarm.alarmId.hashCode,
+        alarm.title.length != 0 ? alarm.title : "Alarm",
+        alarm.description.length != 0
+            ? alarm.description
+            : DateFormat.jm().format(alarm.dateTime),
+        tz.TZDateTime.from(alarm.dateTime, tz.getLocation('America/Toronto')),
+        generalNotificationDetails,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+        androidAllowWhileIdle: true,
+        matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime);
+
+    // print("ALARM SCHEDULED: ${alarm.dateTime}");
+  } else {
+    int distToSunday = DateTime.sunday - alarm.dateTime.weekday;
+    for (var i = 0; i < 7; i++) {
+      if (alarm.days[i] &&
+          DateTime.now()
+              .isBefore(alarm.dateTime.add(Duration(days: distToSunday + i)))) {
+        await flutterLocalNotificationsPlugin.zonedSchedule(
+            alarm.alarmId.hashCode + i,
+            alarm.title.length != 0 ? alarm.title : "Alarm",
+            alarm.description.length != 0
+                ? alarm.description
+                : DateFormat.jm().format(alarm.dateTime),
+            tz.TZDateTime.from(
+                alarm.dateTime.add(Duration(days: distToSunday + i)),
+                tz.getLocation('America/Toronto')),
+            generalNotificationDetails,
+            uiLocalNotificationDateInterpretation:
+                UILocalNotificationDateInterpretation.absoluteTime,
+            androidAllowWhileIdle: true,
+            matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime);
+        // print(
+        //     "$i ALARM SCHEDULED: ${alarm.dateTime.add(Duration(days: distToSunday + i))}");
+      }
+    }
+  }
+}
+
+Future<DateTime?> setDateTime(context, [AlarmInfo? alarm]) async {
+  TimeOfDay _time = TimeOfDay(hour: 7, minute: 15);
+  if (alarm != null) {
+    _time = TimeOfDay(hour: alarm.dateTime.hour, minute: alarm.dateTime.minute);
+  }
   final TimeOfDay? alarmDateTime = await showTimePicker(
     context: context,
     initialTime: _time,
@@ -13,6 +86,7 @@ Future<DateTime?> setDateTime(context) async {
 
   if (alarmDateTime != null) {
     DateTime _now = new DateTime.now();
+
     return new DateTime(_now.year, _now.month, _now.day, alarmDateTime.hour,
         alarmDateTime.minute);
   } else {

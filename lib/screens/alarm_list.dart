@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:alarm_app/constants/theme.dart';
+import 'package:alarm_app/main.dart';
 import 'package:alarm_app/models/alarm_info.dart';
 import 'package:alarm_app/services/database.dart';
 import 'package:alarm_app/services/schedule_alarm.dart';
@@ -43,7 +44,7 @@ class _AlarmListState extends State<AlarmList> {
               itemCount: alarms.length,
               itemBuilder: (context, index) {
                 AlarmInfo alarm = alarms[index];
-                String desc = alarm.repeat ? setDesc(alarm.days) : "";
+                alarm.description = setDesc(alarm.days);
                 return Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
@@ -94,10 +95,11 @@ class _AlarmListState extends State<AlarmList> {
                                 ),
                                 onPressed: () async {
                                   DateTime? newDateTime =
-                                      await setDateTime(context);
+                                      await setDateTime(context, alarm);
                                   if (newDateTime != null) {
-                                    DatabaseService().updateAlarmDateTime(
-                                        alarm.alarmId, newDateTime);
+                                    alarm.dateTime = newDateTime;
+                                    DatabaseService()
+                                        .updateAlarmDateTime(alarm);
                                   }
                                 },
                                 style: ButtonStyle(
@@ -109,8 +111,8 @@ class _AlarmListState extends State<AlarmList> {
                                 child: Switch(
                                   value: alarm.active,
                                   onChanged: (val) {
-                                    DatabaseService().updateAlarmActive(
-                                        alarm.alarmId, !alarm.active);
+                                    alarm.active = !alarm.active;
+                                    DatabaseService().updateAlarmActive(alarm);
                                   },
                                   activeColor: Colors.white,
                                 ),
@@ -122,11 +124,12 @@ class _AlarmListState extends State<AlarmList> {
                       subtitle: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: <Widget>[
-                          if (alarm.repeat == true && desc.length != 0) ...[
+                          if (alarm.repeat == true &&
+                              alarm.description.length != 0) ...[
                             SizedBox(width: paddingH * 0.8),
                             Container(
                               child: Text(
-                                desc,
+                                alarm.description,
                                 style: TextStyle(
                                   color: alarm.active
                                       ? Colors.white
@@ -191,12 +194,12 @@ class _AlarmListState extends State<AlarmList> {
                                     ),
                                     onPressed: () {
                                       alarm.repeat = !alarm.repeat;
-                                      DatabaseService().updateAlarmRepeat(
-                                          alarm.alarmId, alarm.repeat);
-                                      if (desc.length == 0) {
+                                      DatabaseService()
+                                          .updateAlarmRepeat(alarm);
+                                      if (alarm.description.length == 0) {
                                         alarm.days[0] = true;
-                                        DatabaseService().updateAlarmDays(
-                                            alarm.alarmId, alarm.days);
+                                        DatabaseService()
+                                            .updateAlarmDays(alarm);
                                       }
                                     },
                                     style: TextButton.styleFrom(
@@ -210,13 +213,18 @@ class _AlarmListState extends State<AlarmList> {
                                       onChanged: (int day) {
                                         alarm.days[day % 7] =
                                             !alarm.days[day % 7];
-                                        DatabaseService().updateAlarmDays(
-                                            alarm.alarmId, alarm.days);
+                                        DatabaseService()
+                                            .updateAlarmDays(alarm);
+                                        alarm.description = alarm.repeat
+                                            ? setDesc(alarm.days)
+                                            : "";
+                                        DatabaseService()
+                                            .updateAlarmDescription(alarm);
                                         if (alarm.days
                                             .every((_day) => _day == false)) {
                                           alarm.repeat = false;
-                                          DatabaseService().updateAlarmRepeat(
-                                              alarm.alarmId, alarm.repeat);
+                                          DatabaseService()
+                                              .updateAlarmRepeat(alarm);
                                         }
                                       },
                                       values: alarm.repeat
@@ -267,8 +275,8 @@ class _AlarmListState extends State<AlarmList> {
                                     ),
                                     onPressed: () {
                                       alarm.vibrate = !alarm.vibrate;
-                                      DatabaseService().updateAlarmVibrate(
-                                          alarm.alarmId, alarm.vibrate);
+                                      DatabaseService()
+                                          .updateAlarmVibrate(alarm);
                                     },
                                     style: TextButton.styleFrom(
                                       primary: Colors.white,
@@ -296,8 +304,7 @@ class _AlarmListState extends State<AlarmList> {
                                   onPressed: () async {
                                     alarm.title =
                                         await setTitle(context, alarm.title);
-                                    DatabaseService().updateAlarmTitle(
-                                        alarm.alarmId, alarm.title);
+                                    DatabaseService().updateAlarmTitle(alarm);
                                   },
                                 ),
                               ),
