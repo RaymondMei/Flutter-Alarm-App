@@ -134,7 +134,7 @@ class _HomeState extends State<Home> {
             //         .then(
             //           (value) => {
             //             print(value.length),
-            //             value.forEach((v) => print(v.title))
+            //             value.forEach((v) => print("${v.title} ${v.id}"))
             //           },
             //         );
             //   },
@@ -147,6 +147,7 @@ class _HomeState extends State<Home> {
             //     print("Deleted :(");
             //   },
             // ),
+            // *
           ],
         ),
         body: AlarmList(),
@@ -156,8 +157,8 @@ class _HomeState extends State<Home> {
             if (newAlarmDateTime != null) {
               AlarmInfo newAlarm = new AlarmInfo(
                 newAlarmDateTime,
-                "Alarm",
-                DateFormat.jm().format(newAlarmDateTime.toLocal()),
+                "",
+                "",
                 nextGradientColor,
                 true,
                 false,

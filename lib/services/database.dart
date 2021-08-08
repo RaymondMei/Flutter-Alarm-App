@@ -53,8 +53,9 @@ class DatabaseService {
   }
 
   Future<String> createAlarm(AlarmInfo newAlarmInfo) async {
-    updateNoti(newAlarmInfo);
     String alarmId = Timestamp.now().toString();
+    newAlarmInfo.alarmId = alarmId;
+    updateNoti(newAlarmInfo);
     await alarmCollection[uid]!.doc(alarmId).set({
       "dateTime": newAlarmInfo.dateTime,
       "title": newAlarmInfo.title,
@@ -66,11 +67,6 @@ class DatabaseService {
       "vibrate": newAlarmInfo.vibrate,
     });
     return alarmId;
-  }
-
-  Future<void> deleteAlarm(String alarmId) async {
-    flutterLocalNotificationsPlugin.cancel(alarmId.hashCode, tag: alarmId);
-    return await alarmCollection[uid]!.doc(alarmId).delete();
   }
 
   List<AlarmInfo> _alarmListFromSnapshot(QuerySnapshot snapshot) {
@@ -92,6 +88,14 @@ class DatabaseService {
 
   Stream<List<AlarmInfo>> get retrieveAlarms {
     return alarmCollection[uid]!.snapshots().map(_alarmListFromSnapshot);
+  }
+
+  Future<void> deleteAlarm(String alarmId) async {
+    for (var i = 0; i < 7; i++) {
+      flutterLocalNotificationsPlugin.cancel(alarmId.hashCode + i,
+          tag: alarmId);
+    }
+    return await alarmCollection[uid]!.doc(alarmId).delete();
   }
 
   Future updateAlarmDateTime(AlarmInfo newAlarmInfo) async {
