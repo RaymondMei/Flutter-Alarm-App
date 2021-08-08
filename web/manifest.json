@@ -1,6 +1,6 @@
 {
-    "name": "alarm_app",
-    "short_name": "alarm_app",
+    "name": "Alarm App",
+    "short_name": "Alarm App",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

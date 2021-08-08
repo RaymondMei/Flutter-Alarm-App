@@ -30,6 +30,8 @@ Flutter application that creates scheduled alarms and notifications
 
     - Vibrate, alarm sound, alarm intents, alarm screen, etc.
     - Flutter does not support many of these features (or it was too difficult to implement)
+
+- Some Flutter features may become deprecated, check last update date
     
 - Only tested with Android
     
