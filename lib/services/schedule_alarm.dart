@@ -2,6 +2,7 @@ import 'package:alarm_app/constants/theme.dart';
 import 'package:alarm_app/main.dart';
 import 'package:alarm_app/models/alarm_info.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:intl/intl.dart';
 import 'package:timezone/timezone.dart' as tz;
@@ -26,8 +27,15 @@ Future<void> updateNoti(AlarmInfo alarm) async {
 
 Future scheduleAlarm(AlarmInfo alarm) async {
   var androidDetails = new AndroidNotificationDetails(
-      "channelID", "Local Notification", "Description",
-      importance: Importance.max, priority: Priority.max);
+    "channelID",
+    "Local Notification",
+    "Description",
+    icon: "@drawable/codex_logo",
+    importance: Importance.max,
+    priority: Priority.max,
+    tag: alarm.alarmId,
+    usesChronometer: true,
+  );
   var iosDetails = new IOSNotificationDetails();
   var generalNotificationDetails =
       new NotificationDetails(android: androidDetails, iOS: iosDetails);
@@ -46,7 +54,7 @@ Future scheduleAlarm(AlarmInfo alarm) async {
         androidAllowWhileIdle: true,
         matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime);
 
-    // print("ALARM SCHEDULED: ${alarm.dateTime}");
+    print("ALARM SCHEDULED: ${alarm.dateTime}");
   } else {
     int distToSunday = DateTime.sunday - alarm.dateTime.weekday;
     for (var i = 0; i < 7; i++) {
@@ -67,8 +75,8 @@ Future scheduleAlarm(AlarmInfo alarm) async {
                 UILocalNotificationDateInterpretation.absoluteTime,
             androidAllowWhileIdle: true,
             matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime);
-        // print(
-        //     "$i ALARM SCHEDULED: ${alarm.dateTime.add(Duration(days: distToSunday + i))}");
+        print(
+            "$i ALARM SCHEDULED: ${alarm.dateTime.add(Duration(days: distToSunday + i))}");
       }
     }
   }

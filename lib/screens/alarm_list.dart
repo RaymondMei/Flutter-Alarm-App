@@ -1,18 +1,12 @@
 import 'dart:math';
-
 import 'package:alarm_app/constants/theme.dart';
-import 'package:alarm_app/main.dart';
 import 'package:alarm_app/models/alarm_info.dart';
 import 'package:alarm_app/services/database.dart';
 import 'package:alarm_app/services/schedule_alarm.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:weekday_selector/weekday_selector.dart';
-import 'package:animations/animations.dart';
 
 class AlarmList extends StatefulWidget {
   const AlarmList({Key? key}) : super(key: key);
@@ -237,53 +231,53 @@ class _AlarmListState extends State<AlarmList> {
                                   ),
                                 ],
                               ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  TextButton.icon(
-                                    icon: Icon(
-                                      Icons.notifications_on_outlined,
-                                      size: alarmOptionsIconSize,
-                                    ),
-                                    label: Text(
-                                      "Alarm Sound",
-                                      style: TextStyle(
-                                        fontSize: alarmOptionsFontSize,
-                                      ),
-                                    ),
-                                    onPressed: () {},
-                                    style: TextButton.styleFrom(
-                                      primary: Colors.white,
-                                    ),
-                                  ),
-                                  TextButton.icon(
-                                    icon: alarm.vibrate
-                                        ? Icon(
-                                            Icons.check_box_outlined,
-                                            size: alarmOptionsIconSize,
-                                          )
-                                        : Icon(
-                                            Icons.check_box_outline_blank,
-                                            size: alarmOptionsIconSize,
-                                          ),
-                                    label: Text(
-                                      "Vibrate",
-                                      style: TextStyle(
-                                        fontSize: alarmOptionsFontSize,
-                                      ),
-                                    ),
-                                    onPressed: () {
-                                      alarm.vibrate = !alarm.vibrate;
-                                      DatabaseService()
-                                          .updateAlarmVibrate(alarm);
-                                    },
-                                    style: TextButton.styleFrom(
-                                      primary: Colors.white,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                              // Row(
+                              //   mainAxisAlignment:
+                              //       MainAxisAlignment.spaceBetween,
+                              //   children: [
+                              //     TextButton.icon(
+                              //       icon: Icon(
+                              //         Icons.notifications_on_outlined,
+                              //         size: alarmOptionsIconSize,
+                              //       ),
+                              //       label: Text(
+                              //         "Alarm Sound",
+                              //         style: TextStyle(
+                              //           fontSize: alarmOptionsFontSize,
+                              //         ),
+                              //       ),
+                              //       onPressed: () {},
+                              //       style: TextButton.styleFrom(
+                              //         primary: Colors.white,
+                              //       ),
+                              //     ),
+                              //     TextButton.icon(
+                              //       icon: alarm.vibrate
+                              //           ? Icon(
+                              //               Icons.check_box_outlined,
+                              //               size: alarmOptionsIconSize,
+                              //             )
+                              //           : Icon(
+                              //               Icons.check_box_outline_blank,
+                              //               size: alarmOptionsIconSize,
+                              //             ),
+                              //       label: Text(
+                              //         "Vibrate",
+                              //         style: TextStyle(
+                              //           fontSize: alarmOptionsFontSize,
+                              //         ),
+                              //       ),
+                              //       onPressed: () {
+                              //         alarm.vibrate = !alarm.vibrate;
+                              //         DatabaseService()
+                              //             .updateAlarmVibrate(alarm);
+                              //       },
+                              //       style: TextButton.styleFrom(
+                              //         primary: Colors.white,
+                              //       ),
+                              //     ),
+                              //   ],
+                              // ),
                               SizedBox(
                                 width: double.infinity,
                                 child: TextButton.icon(
