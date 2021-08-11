@@ -191,7 +191,8 @@ class _AlarmListState extends State<AlarmList> {
                                       DatabaseService()
                                           .updateAlarmRepeat(alarm);
                                       if (alarm.description.length == 0) {
-                                        alarm.days[0] = true;
+                                        alarm.days[alarm.dateTime.weekday % 7] =
+                                            true;
                                         DatabaseService()
                                             .updateAlarmDays(alarm);
                                       }

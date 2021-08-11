@@ -8,20 +8,23 @@ import 'package:intl/intl.dart';
 import 'package:timezone/timezone.dart' as tz;
 
 Future<void> updateNoti(AlarmInfo alarm) async {
-  if (!alarm.active) return;
   if (!alarm.repeat) {
     await flutterLocalNotificationsPlugin.cancel(alarm.alarmId.hashCode,
         tag: alarm.alarmId);
     if (DateTime.now().isAfter(alarm.dateTime)) {
       alarm.dateTime = alarm.dateTime.add(Duration(days: 1));
     }
-    scheduleAlarm(alarm);
+    if (alarm.active) {
+      scheduleAlarm(alarm);
+    }
   } else {
     for (var i = 0; i < 7; i++) {
       await flutterLocalNotificationsPlugin.cancel(alarm.alarmId.hashCode + i,
           tag: alarm.alarmId);
     }
-    scheduleAlarm(alarm);
+    if (alarm.active) {
+      scheduleAlarm(alarm);
+    }
   }
 }
 

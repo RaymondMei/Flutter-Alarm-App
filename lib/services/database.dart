@@ -120,12 +120,7 @@ class DatabaseService {
   }
 
   Future updateAlarmActive(AlarmInfo newAlarmInfo) async {
-    if (newAlarmInfo.active) {
-      updateNoti(newAlarmInfo);
-    } else {
-      flutterLocalNotificationsPlugin.cancel(newAlarmInfo.alarmId.hashCode,
-          tag: newAlarmInfo.alarmId);
-    }
+    updateNoti(newAlarmInfo);
     return await alarmCollection[uid]!.doc(newAlarmInfo.alarmId).update({
       "active": newAlarmInfo.active,
     });
