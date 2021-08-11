@@ -2,25 +2,27 @@
 
 **Raymond Mei** - Last Functional Test: August 2021
 
-Flutter application that creates scheduled alarms and notifications
+Flutter and Firebase application that schedules alarms and notifications
 
 ---
 
 ## Features
 
-1. Add a new alarm
+1. All data is stored both locally and on the cloud in Firestore
+
+2. Add a new alarm
 
     - Set time using Material Time Picker
     - Set alarm to repeat on specific days of the week
     - Set alarm title/label
 
-2. Disable an alarm
+3. Disable an alarm
 
-3. Delete an alarm
+4. Delete an alarm
 
-4. Notification at the exact scheduled time
+5. Notification at the exact scheduled time
 
-5. Dark and light mode
+6. Dark and light mode
 
 ---
 
@@ -31,7 +33,7 @@ Flutter application that creates scheduled alarms and notifications
     - Vibrate, alarm sound, alarm intents, alarm screen, etc.
     - Flutter does not support many of these features (or it was too difficult to implement)
 
-- Some Flutter features may become deprecated, check last update date
+- Certain Flutter features may become deprecated, app is working until last update date
     
 - Only tested with Android
     
