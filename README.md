@@ -8,21 +8,23 @@ Flutter and Firebase application that schedules alarms and notifications
 
 ## Features
 
-1. All data is stored both locally and on the cloud in Firestore
+1. All user-specific data is stored both locally and on the cloud in Firestore
 
-2. Add a new alarm
+2. Device/user authentication
+
+3. Add a new alarm
 
     - Set time using Material Time Picker
     - Set alarm to repeat on specific days of the week
     - Set alarm title/label
 
-3. Disable an alarm
+4. Disable an alarm
 
-4. Delete an alarm
+5. Delete an alarm
 
-5. Notification at the exact scheduled time
+6. Notification at the exact scheduled time
 
-6. Dark and light mode
+7. Dark and light mode
 
 ---
 
