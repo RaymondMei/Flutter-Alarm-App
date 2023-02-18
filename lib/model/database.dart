@@ -1,7 +1,7 @@
-import 'package:alarm_app/constants/theme.dart';
-import 'package:alarm_app/main.dart';
-import 'package:alarm_app/models/alarm_info.dart';
-import 'package:alarm_app/services/schedule_alarm.dart';
+import 'package:alarm_app/view/constants/theme.dart';
+import 'package:alarm_app/controller/main.dart';
+import 'package:alarm_app/model/alarm_info.dart';
+import 'package:alarm_app/controller/schedule_alarm.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';

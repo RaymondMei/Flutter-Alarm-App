@@ -1,10 +1,10 @@
-import 'package:alarm_app/models/alarm_info.dart';
-import 'package:alarm_app/screens/alarm_list.dart';
-import 'package:alarm_app/services/database.dart';
-import 'package:alarm_app/services/schedule_alarm.dart';
+import 'package:alarm_app/model/alarm_info.dart';
+import 'package:alarm_app/view/alarm_list.dart';
+import 'package:alarm_app/model/database.dart';
+import 'package:alarm_app/controller/schedule_alarm.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:alarm_app/constants/theme.dart';
+import 'package:alarm_app/view/constants/theme.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);

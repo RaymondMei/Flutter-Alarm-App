@@ -1,6 +1,6 @@
-import 'package:alarm_app/constants/loading.dart';
-import 'package:alarm_app/screens/home.dart';
-import 'package:alarm_app/services/database.dart';
+import 'package:alarm_app/view/constants/loading.dart';
+import 'package:alarm_app/view/home.dart';
+import 'package:alarm_app/model/database.dart';
 import 'package:flutter/material.dart';
 
 class Wrapper extends StatefulWidget {

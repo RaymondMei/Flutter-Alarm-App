@@ -1,11 +1,12 @@
-import 'package:alarm_app/constants/theme.dart';
-import 'package:alarm_app/screens/wrapper.dart';
-import 'package:alarm_app/services/database.dart';
+import 'package:alarm_app/view/constants/theme.dart';
+import 'package:alarm_app/controller/wrapper.dart';
+import 'package:alarm_app/model/database.dart';
+import 'package:alarm_app/view/constants/theme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:alarm_app/screens/home.dart';
+import 'package:alarm_app/view/home.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/services.dart';

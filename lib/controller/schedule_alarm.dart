@@ -1,6 +1,6 @@
-import 'package:alarm_app/constants/theme.dart';
-import 'package:alarm_app/main.dart';
-import 'package:alarm_app/models/alarm_info.dart';
+import 'package:alarm_app/view/constants/theme.dart';
+import 'package:alarm_app/controller/main.dart';
+import 'package:alarm_app/model/alarm_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';

@@ -1,4 +1,4 @@
-import 'package:alarm_app/constants/theme.dart';
+import 'package:alarm_app/view/constants/theme.dart';
 import 'package:flutter/material.dart';
 
 class Loading extends StatelessWidget {
