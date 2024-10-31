@@ -28,25 +28,6 @@ Flutter and Firebase application that schedules alarms and notifications
 
 ---
 
-#### *Notes*
-
-- Some features are currently not available
-
-    - Vibrate, alarm sound, alarm intents, alarm screen, etc.
-    - Flutter does not support many of these features (or it was too difficult to implement)
-
-- Certain Flutter features may become deprecated, app is working until last update date
-    
-- Only tested with Android
-    
-- Dark/Light mode only changes background for now, might update in the future (*might*)
-
-- Might also add additional features and optimizations later
-
-
-
----
-
 #### Screenshots
 
 <p align=middle>
